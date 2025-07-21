@@ -125,7 +125,7 @@ class HandEvaluator:
 
 # --- The Main Bot Class ---
 
-class SimplePlayer(Bot):
+class GTOPlayer(Bot):
     def __init__(self):
         super().__init__()
         self.hand: List[Card] = []
@@ -155,8 +155,8 @@ class SimplePlayer(Bot):
 
     def on_start(self, starting_chips: int, player_hands: List[str], blind_amount: int, big_blind_player_id: int, small_blind_player_id: int, all_players: List[int]):
         self.all_player_ids = all_players
-        self.big_blind_player_id = big_blind_player_id
-        self.hand = [Card(c) for c in player_hands]
+        my_hand_str = player_hands[0]
+        self.hand = [Card(c) for c in my_hand_str.split(" ")]
         print(f"Player {self.id} started game with hand {self.hand}")
 
     def on_round_start(self, round_state: RoundStateClient, remaining_chips: int):
@@ -238,7 +238,7 @@ class SimplePlayer(Bot):
         if player_count <= 3: return 'LATE'
         try:
             my_index = self.all_player_ids.index(self.id)
-            bb_index = self.all_player_ids.index(self.big_blind_player_id)
+            bb_index = self.all_player_ids.index(round_state.big_blind_player_id)
             relative_pos = (my_index - bb_index + player_count) % player_count
         except ValueError:
             return 'LATE' # Fallback
